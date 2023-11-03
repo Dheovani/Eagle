@@ -1,0 +1,71 @@
+.results-panel {
+	height: 100%;
+	margin: auto;
+	padding: 5%;
+}
+
+.panel {
+	background-color: rgb(53, 53, 53);
+	border: 1px solid black;
+	border-radius: 5px;
+	width: 49%; /* 1% é de imposto */
+	height: 45vh;
+	overflow-y: scroll;
+}
+
+.panel div {
+	border-bottom: 1px solid black;
+}
+
+.panel p {
+	margin: 5px;
+	padding: 0 1%;
+	font-size: small;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-shadow: 0.5px 0.5px 1px black;
+}
+
+.panel p:hover {
+	cursor: pointer;
+	font-weight: bolder;
+}
+
+.panel::-webkit-scrollbar {
+	display: none;
+}
+
+#files {
+	margin-left: 0;
+	margin-right: auto;
+	float: left;
+}
+
+#lines {
+	margin-left: auto;
+	margin-right: 0;
+	float: right;
+}
+
+.search-button {
+	background-color: rgb(53, 53, 53);
+	color: white;
+	float: left;
+	display: flex;
+	padding: 5px 10px;
+	border: 1px solid black;
+	border-radius: 5px;
+	margin: 0 0 0 5%;
+}
+
+.clean-button {
+	background-color: rgb(53, 53, 53);
+	color: white;
+	float: left;
+	display: flex;
+	padding: 5px 10px;
+	border: 1px solid black;
+	border-radius: 5px;
+	margin: 0 0 0 1%;
+}
