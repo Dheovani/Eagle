@@ -2,22 +2,12 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
-
-#define EXT ".dat"
-#define MAX_PATH 260 // Windows' max size for a file path
+#include "Definitions.h"
 
 using std::ofstream, std::ifstream, std::ios;
 
-typedef unsigned int UINT;
-
 namespace utils
 {
-	typedef struct Record {
-		UINT id;
-		char data[MAX_PATH];
-	} Record;
-
 	class BWriter final
 	{
 	private:

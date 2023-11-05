@@ -1,59 +1,53 @@
 import { useState, useEffect } from "react";
+import { PostMethod } from "@/utils/RestMethods";
+import { toast } from "react-toastify";
 import "./styles/panel.css";
 
 export interface Line {
-	id?: number;
-	lineNumber: number;
+	num: number;
 	content: string;
-	file: {
-		id?: number;
-		name: string;
-		path: string;
-	};
 };
 
-interface File {
-	content: Array<Content>;
+export interface File {
 	path: string;
-};
-
-interface Content {
-	content: string;
-	lineNumber: number;
+	lines: Line[];
 };
 
 interface Props {
-	fields: Array<Line>,
-	search: () => void,
+	params: any,
+	submit: () => void,
 	cleanAll: () => void
 };
 
 export const Panel = (props: Props): JSX.Element => {
-	const { fields, search, cleanAll } = props;
+	const { params, submit, cleanAll } = props;
 	const [files, setFiles] = useState<File[]>([]);
-	const [content, setContent] = useState<Content[]>([]);
+	const [lines, setLines] = useState<Line[]>([]);
 
-	fields.forEach(({ content, file, lineNumber }) => {
-		const { path } = file;
-		const fileContent = { content: content, lineNumber };
+	const search = (): void => {
+		submit();
 
-		// Verifica se o arquivo já esta na lista de arquivos
-		const sameFile = files.filter(item => item.path === path);
-		if (!sameFile.length) {
-			files.push({ content: [], path});
-		}
+		PostMethod("http://localhost:8080/api/v1/Search/find", JSON.stringify(params), (status: number, response: any) => {
+			if (status === 200) {
+				const fieldList: File[] = [];
 
-		// Verifica se o conteúdo já foi preenchido
-		const sameContent = sameFile.at(0)?.content.filter(item => item.lineNumber === lineNumber);
-		if (!sameContent?.length) {
-			files.filter(({path}) => path === file.path).at(0)?.content.push(fileContent);
-		}
-	});
+				response.forEach((element: File) => {
+					fieldList.push(element);
+				});
 
-	useEffect(() => {
-		setFiles([]);
-		setContent([]);
-	}, [fields]);
+				setFiles(fieldList);
+			}
+
+			if (status >= 400) {
+				const error = "Error: " + response.error,
+					msg = "Message: " + response.message;
+				console.error(error);
+				console.error(msg);
+
+				toast("Ocorreu um erro ao realizar a pesquisa.");
+			}
+		});
+	};
 
 	return (
 		<>
@@ -66,7 +60,7 @@ export const Panel = (props: Props): JSX.Element => {
 					files.length > 0 &&
 					files.map((item: File, index: number) => (
 						<div key={index}>
-							<p onClick={() => setContent(item.content)}>{item.path}</p>
+							<p onClick={() => setLines(item.lines)}>{item.path}</p>
 						</div>
 					))
 				}
@@ -76,10 +70,10 @@ export const Panel = (props: Props): JSX.Element => {
 				
 				<div className="panel" id="lines">
 				{
-					content.length > 0 &&
-					content.map((item: Content, index: number) => (
+					lines.length > 0 &&
+					lines.map((item: Line, index: number) => (
 						<div key={index}>
-							<p>Linha {item.lineNumber}: {item.content}</p>
+							<p>Linha {item.num}: {item.content}</p>
 						</div>
 					))
 				}

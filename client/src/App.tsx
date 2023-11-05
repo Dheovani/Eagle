@@ -21,7 +21,6 @@ export const App = (): JSX.Element => {
 	const [path, setPath] = useState<Path>({ path: "" });
 	const [filter, setFilter] = useState<Filter>({ filter: "" });
 	const [keyword, setKeyword] = useState<Keyword>({ keyword: "" });
-	const [fields, setFields] = useState<Line[]>([]);
 	const [subFolders, setSubFolders] = useState(true);
 	const [ignoreCase, setIgnoreCase] = useState(true);
 
@@ -39,44 +38,18 @@ export const App = (): JSX.Element => {
 		}
 	};
 
-	const search = (): void => {
-		submit();
-
-		const params = {
-			path: path,
-			filter: filter,
-			keyword: keyword,
-			subFolders: subFolders,
-			ignoreCase: !ignoreCase,
-		};
-
-		PostMethod("http://localhost:8080/api/v1/search/find", JSON.stringify(params), (status: number, response: any) => {
-			if (status === 200) {
-				const fieldList: Line[] = [];
-
-				response.forEach((element: Line) => {
-					fieldList.push(element);
-				});
-
-				setFields(fieldList);
-			}
-
-			if (status >= 400) {
-				const error = "Error: " + response.error,
-					msg = "Message: " + response.message;
-				console.error(error);
-				console.error(msg);
-
-				toast("Ocorreu um erro ao realizar a pesquisa.");
-			}
-		});
-	};
-
 	const cleanAll = (): void => {
 		setPath({ path: "" });
 		setFilter({ filter: "" });
 		setKeyword({ keyword: "" });
-		setFields([]);
+	};
+
+	const params = {
+		path: path,
+		filter: filter,
+		keyword: keyword,
+		subFolders: subFolders,
+		ignoreCase: !ignoreCase
 	};
 
 	return (
@@ -105,7 +78,11 @@ export const App = (): JSX.Element => {
 				/>
 			</div>
 
-			<Panel fields={fields} cleanAll={cleanAll} search={search}></Panel>
+			<Panel
+				submit={submit}
+				cleanAll={cleanAll}
+				params={params}
+			/>
 		</div>
 	);
 };

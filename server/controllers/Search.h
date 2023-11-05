@@ -1,6 +1,7 @@
 #pragma once
 
 #include <drogon/HttpController.h>
+#include "../utils/Tracker.h";
 
 using drogon::HttpController;
 using drogon::HttpMethod;
@@ -12,7 +13,7 @@ namespace api::v1
 	{
 	public:
 		METHOD_LIST_BEGIN
-		METHOD_ADD(Search::search, "", HttpMethod::Get, HttpMethod::Post, HttpMethod::Options);
+		METHOD_ADD(Search::search, "/find", HttpMethod::Get, HttpMethod::Post, HttpMethod::Options);
 		METHOD_LIST_END
 
 		void search(const HttpRequestPtr& req,
