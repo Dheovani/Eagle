@@ -7,7 +7,6 @@ import { FILTER, History } from "./History";
 export interface Filter {
 	filter: string;
 	id?: number;
-	date?: Date;
 }
 
 export const FilterInput = (props: any): JSX.Element => {
@@ -16,7 +15,7 @@ export const FilterInput = (props: any): JSX.Element => {
 
 	const updateHistory = (): void => {
 		GetMethod("http://localhost:8080/api/v1/Filter", (status: number, response: any) => {
-			if (status === 200) setFilter(response);
+			if (status === 200) setFilter(response.results);
 		});
 	};
 
@@ -56,7 +55,7 @@ export const FilterInput = (props: any): JSX.Element => {
 					placeholder={selected ? "" : "Exemplo: .js; .jsx;"}
 					disabled={props.disable}
 					onFocus={() => setSelected(true)}
-					onBlur={() => setSelected(false)}
+					onBlur={() => setTimeout(() => setSelected(false), 100)}
 					onChange={(e) => {
 						const filter = {
 							filter: e.target.value,

@@ -7,10 +7,10 @@ using drogon::HttpStatusCode;
 
 void Filter::getAll(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
-	const std::vector<Dao> filters = writer.readAll();
+	const std::vector<Record> filters = writer.readAll();
 	Json::Value ret;
 
-	for (const Dao& filter : filters) {
+	for (const Record& filter : filters) {
 		Json::Value value;
 		value["id"] = filter.id;
 		value["filter"] = filter.data;
@@ -27,7 +27,14 @@ void Filter::getAll(const HttpRequestPtr& req, std::function<void(const HttpResp
 void Filter::include(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	Json::Value json = *req->getJsonObject();
-	Dao filter{ json["id"].asUInt() | writer.nextId(), json["filter"].asString() };
+
+	std::string data = json["filter"].asString();
+	char buffer[MAX_PATH];
+	strncpy_s(buffer, data.c_str(), sizeof(buffer));
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	Record filter{ json["id"].asUInt() | writer.nextId() };
+	strcpy_s(filter.data, buffer);
 	writer.write(filter);
 
 	auto resp = HttpResponse::newHttpResponse();

@@ -8,7 +8,6 @@ import { History, PATH } from "./History";
 export interface Path {
 	path: string;
 	id?: number;
-	date?: Date;
 }
 
 export const PathInput = (props: any): JSX.Element => {
@@ -17,7 +16,7 @@ export const PathInput = (props: any): JSX.Element => {
 
 	const updateHistory = (): void => {
 		GetMethod("http://localhost:8080/api/v1/Path", (status: number, response: any) => {
-			if (status === 200) setPaths(response);
+			if (status === 200) setPaths(response.results);
 		});
 	};
 
@@ -64,14 +63,13 @@ export const PathInput = (props: any): JSX.Element => {
 					name="path"
 					id="path"
 					value={props.defaultValue}
-					placeholder={selected ? "" : "Exemplo: C:\\Users\\Exemplo"}
+					placeholder={selected ? "" : "Exemplo: C:\\Users\\Example"}
 					disabled={props.disable}
-					onBlur={() => setSelected(false)}
 					onFocus={() => setSelected(true)}
+					onBlur={() => setTimeout(() => setSelected(false), 100)}
 					onChange={(e) => {
 						const path = {
 							path: e.target.value,
-							date: new Date(),
 						};
 						props.updateDefaultValue(path);
 					}}

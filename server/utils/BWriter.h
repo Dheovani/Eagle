@@ -5,34 +5,36 @@
 #include <vector>
 
 #define EXT ".dat"
+#define MAX_PATH 260 // Windows' max size for a file path
 
-using std::fstream, std::ios;
+using std::ofstream, std::ifstream, std::ios;
+
 typedef unsigned int UINT;
 
 namespace utils
 {
-	typedef struct Dao {
+	typedef struct Record {
 		UINT id;
-		std::string data;
-	} Dao;
+		char data[MAX_PATH];
+	} Record;
 
 	class BWriter final
 	{
 	private:
 		std::string file;
 
-		void overrideRecords(std::vector<Dao> records) const;
+		void overrideRecords(std::vector<Record> records) const;
 
 	public:
 		BWriter(const std::string& name);
 
-		void write(Dao value) const;
+		void write(Record value) const;
 
-		void write(Dao values[]) const;
+		void write(Record values[]) const;
 
-		Dao read(UINT id) const;
+		Record read(UINT id) const;
 
-		std::vector<Dao> readAll() const;
+		std::vector<Record> readAll() const;
 
 		UINT nextId() const;
 

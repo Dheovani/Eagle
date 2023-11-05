@@ -18,23 +18,23 @@ const Logo = (): JSX.Element => {
 };
 
 export const App = (): JSX.Element => {
-	const [path, setPath] = useState<Path>({ path: "", date: new Date() });
-	const [filter, setFilter] = useState<Filter>({ filter: "", date: new Date() });
-	const [keyword, setKeyword] = useState<Keyword>({ keyword: "", date: new Date() });
+	const [path, setPath] = useState<Path>({ path: "" });
+	const [filter, setFilter] = useState<Filter>({ filter: "" });
+	const [keyword, setKeyword] = useState<Keyword>({ keyword: "" });
 	const [fields, setFields] = useState<Line[]>([]);
 	const [subFolders, setSubFolders] = useState(true);
 	const [ignoreCase, setIgnoreCase] = useState(true);
 
 	const submit = (): void => {
-		if (path?.path && !path?.id) {
+		if (path?.path && path?.id == undefined) {
 			PostMethod("http://localhost:8080/api/v1/Path", JSON.stringify(path));
 		}
 
-		if (filter?.filter && !filter?.id) {
+		if (filter?.filter && filter?.id == undefined) {
 			PostMethod("http://localhost:8080/api/v1/Filter", JSON.stringify(filter));
 		}
 
-		if (keyword?.keyword && !keyword?.id) {
+		if (keyword?.keyword && keyword?.id == undefined) {
 			PostMethod("http://localhost:8080/api/v1/Keyword", JSON.stringify(keyword));
 		}
 	};
@@ -73,9 +73,9 @@ export const App = (): JSX.Element => {
 	};
 
 	const cleanAll = (): void => {
-		setPath({ path: "", date: new Date() });
-		setFilter({ filter: "", date: new Date() });
-		setKeyword({ keyword: "", date: new Date() });
+		setPath({ path: "" });
+		setFilter({ filter: "" });
+		setKeyword({ keyword: "" });
 		setFields([]);
 	};
 

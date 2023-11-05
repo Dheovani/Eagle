@@ -7,7 +7,6 @@ import { History, KEYWORD } from "./History";
 export interface Keyword {
 	keyword: string;
 	id?: number;
-	date?: Date;
 }
 
 export const KeywordInput = (props: any): JSX.Element => {
@@ -16,7 +15,7 @@ export const KeywordInput = (props: any): JSX.Element => {
 
 	const updateHistory = (): void => {
 		GetMethod("http://localhost:8080/api/v1/Keyword", (status: number, response: any) => {
-			if (status === 200) setKeyword(response);
+			if (status === 200) setKeyword(response.results);
 		});
 	};
 
@@ -54,7 +53,7 @@ export const KeywordInput = (props: any): JSX.Element => {
 					placeholder={selected ? "" : "Digite aqui as palavras-chave"}
 					disabled={props.disable}
 					onFocus={() => setSelected(true)}
-					onBlur={() => setSelected(false)}
+					onBlur={() => setTimeout(() => setSelected(false), 100)}
 					onChange={(e) => {
 						const keyword = {
 							keyword: e.target.value,

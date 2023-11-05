@@ -54,10 +54,10 @@ inline std::wstring GetSelectedDirectory()
 
 void Path::getAll(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
-	const std::vector<Dao> paths = writer.readAll();
+	const std::vector<Record> paths = writer.readAll();
 	Json::Value ret;
 
-	for (const Dao& path : paths) {
+	for (const Record& path : paths) {
 		Json::Value value;
 		value["id"] = path.id;
 		value["path"] = path.data;
@@ -81,7 +81,6 @@ void Path::select(const HttpRequestPtr& req, std::function<void(const HttpRespon
 
         std::wcstombs(narrowString, selectedPath.c_str(), bufferSize);
         Json::Value body;
-        body["id"] = writer.nextId();
         body["path"] = narrowString;
 
         auto jsonResp = HttpResponse::newHttpJsonResponse(body);
@@ -100,7 +99,14 @@ void Path::select(const HttpRequestPtr& req, std::function<void(const HttpRespon
 void Path::include(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	Json::Value json = *req->getJsonObject();
-	Dao path{ json["id"].asUInt() | writer.nextId(), json["path"].asString()};
+
+    std::string data = json["path"].asString();
+    char buffer[MAX_PATH];
+    strncpy_s(buffer, data.c_str(), sizeof(buffer));
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    Record path{ json["id"].asUInt() | writer.nextId() };
+    strcpy_s(path.data, buffer);
 	writer.write(path);
 
 	auto resp = HttpResponse::newHttpResponse();

@@ -4,35 +4,33 @@ using namespace utils;
 
 BWriter::BWriter(const std::string& name) : file(name + EXT)
 {
-	fstream fout;
-	fout.open(file, ios::out | ios::binary);
+	ofstream fout(file, ios::binary | ios::app);
 }
 
-void BWriter::overrideRecords(std::vector<Dao> records) const
+void BWriter::overrideRecords(std::vector<Record> records) const
 {
-	fstream fout(file, ios::out | ios::binary);
+	ofstream fout(file, ios::out | ios::binary);
 
-    size_t i, size = records.size();
-	Dao* daoArray = new Dao[size];
+	size_t i, size = records.size();
+	Record* daoArray = new Record[size];
 
-    for (i = 0; i < size; i++)
-        daoArray[i] = records.at(i);
+	for (i = 0; i < size; i++)
+		daoArray[i] = records.at(i);
 
-    if (fout) {
-        fout.write(reinterpret_cast<char*>(daoArray), sizeof(Dao) * size);
-        fout.close();
-    }
-    else {
+	if (fout) {
+		fout.write(reinterpret_cast<char*>(daoArray), sizeof(Record) * size);
+		fout.close();
+	}
+	else {
 		std::cerr << "Error opening file!!" << std::endl;
-    }
+	}
 
 	delete[] daoArray;
 }
 
-void BWriter::write(Dao value) const
+void BWriter::write(Record value) const
 {
-	fstream fout;
-	fout.open(file, ios::app | ios::binary);
+	ofstream fout(file, ios::binary | ios::app);
 
 	if (fout) {
 		fout.write(reinterpret_cast<char*>(&value), sizeof(value));
@@ -43,14 +41,13 @@ void BWriter::write(Dao value) const
 	}
 }
 
-void BWriter::write(Dao values[]) const
+void BWriter::write(Record values[]) const
 {
-	fstream fout;
-	fout.open(file, ios::app | ios::binary);
+	ofstream fout(file, ios::binary | ios::app);
 
 	if (fout) {
 		size_t size = sizeof(values) / sizeof(values[0]);
-		fout.write(reinterpret_cast<char*>(values), sizeof(Dao) * size);
+		fout.write(reinterpret_cast<char*>(values), sizeof(Record) * size);
 		fout.close();
 	}
 	else {
@@ -58,14 +55,13 @@ void BWriter::write(Dao values[]) const
 	}
 }
 
-Dao BWriter::read(UINT id) const
+Record BWriter::read(UINT id) const
 {
-	fstream fin;
-	fin.open(file, ios::in | ios::binary);
+	ifstream fin(file, ios::binary | ios::in);
 
 	if (fin) {
-		Dao record;
-		while (fin.read(reinterpret_cast<char*>(&record), sizeof(Dao))) {
+		Record record;
+		while (fin.read(reinterpret_cast<char*>(&record), sizeof(Record))) {
 			if (record.id == id) {
 				fin.close();
 				return record;
@@ -81,15 +77,14 @@ Dao BWriter::read(UINT id) const
 	throw std::exception("Value not found!");
 }
 
-std::vector<Dao> BWriter::readAll() const
+std::vector<Record> BWriter::readAll() const
 {
-	std::vector<Dao> result;
-	fstream fin;
-	fin.open(file, ios::in | ios::binary);
+	std::vector<Record> result;
+	ifstream fin(file, ios::binary);
 
 	if (fin) {
-		Dao record;
-		while (fin.read(reinterpret_cast<char*>(&record), sizeof(Dao))) {
+		Record record;
+		while (fin.read(reinterpret_cast<char*>(&record), sizeof(Record))) {
 			result.push_back(record);
 		}
 
@@ -109,9 +104,9 @@ UINT BWriter::nextId() const
 
 void BWriter::deleteRecord(UINT targetId) const
 {
-	std::vector<Dao> records = readAll();
+	std::vector<Record> records = readAll();
 
-	auto it = std::remove_if(records.begin(), records.end(), [targetId](const Dao& record) {
+	auto it = std::remove_if(records.begin(), records.end(), [targetId](const Record& record) {
 		return record.id == targetId;
 	});
 

@@ -7,13 +7,13 @@ using drogon::HttpStatusCode;
 
 void Keyword::getAll(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
-	const std::vector<Dao> keywords = writer.readAll();
+	const std::vector<Record> keywords = writer.readAll();
 	Json::Value ret;
 
-	for (const Dao& keyword : keywords) {
+	for (const Record& keyword : keywords) {
 		Json::Value value;
 		value["id"] = keyword.id;
-		value["path"] = keyword.data;
+		value["keyword"] = keyword.data;
 
 		ret["results"].append(value);
 	}
@@ -27,7 +27,14 @@ void Keyword::getAll(const HttpRequestPtr& req, std::function<void(const HttpRes
 void Keyword::include(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	Json::Value json = *req->getJsonObject();
-	Dao keyword{ json["id"].asUInt() | writer.nextId(), json["keyword"].asString() };
+
+	std::string data = json["keyword"].asString();
+	char buffer[MAX_PATH];
+	strncpy_s(buffer, data.c_str(), sizeof(buffer));
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	Record keyword{ json["id"].asUInt() | writer.nextId() };
+	strcpy_s(keyword.data, buffer);
 	writer.write(keyword);
 
 	auto resp = HttpResponse::newHttpResponse();

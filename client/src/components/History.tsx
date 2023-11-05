@@ -1,11 +1,11 @@
-import { AiOutlineClose } from "react-icons/ai";
+import { BsFillTrashFill } from "react-icons/bs";
 import "./styles/history.css";
 import { DeleteMethod } from "@/utils/RestMethods";
 import { toast } from "react-toastify";
 
-export const PATH = "path";
+export const PATH = "Path";
 export const FILTER = "Filter";
-export const KEYWORD = "keyword";
+export const KEYWORD = "Keyword";
 
 interface Props {
     items: Array<any>,
@@ -44,11 +44,11 @@ export const History = (props: Props): JSX.Element => {
             {
                 items.map((item: any, index: number) => (
                     <div key={index}>
-                        <p defaultValue={item.path} onClick={() => updateDefaultValue(item)}>
-                            {item.path}
+                        <p defaultValue={item[endpoint.toLowerCase()]} onClick={() => updateDefaultValue(item)}>
+                            {item[endpoint.toLowerCase()]}
                         </p>
                         <button onClick={() => deleteHistoryOption(item)}>
-                            <AiOutlineClose />
+                            <BsFillTrashFill />
                         </button>
                     </div>
                 ))
