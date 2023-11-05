@@ -30,6 +30,12 @@ void BWriter::overrideRecords(std::vector<Record> records) const
 
 void BWriter::write(Record value) const
 {
+	auto records = readAll();
+	for (const auto& rec : records) {
+		if (rec.data == value.data)
+			return;
+	}
+
 	ofstream fout(file, ios::binary | ios::app);
 
 	if (fout) {
