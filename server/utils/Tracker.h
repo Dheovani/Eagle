@@ -17,7 +17,9 @@ namespace utils
 		std::vector<std::string> validPaths = std::vector<std::string>{};
 		std::vector<std::string> invalidPaths = std::vector<std::string>{};
 
-		bool hasValidExtension(const std::string& fileName) noexcept;
+		bool hasValidExtension(const fs::path& fileName) noexcept;
+
+		bool hasInvaliPath(const std::string& fileName);
 
 		void traverseDirectory(const std::string& search, const fs::path& directory, Json::Value& files);
 

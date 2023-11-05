@@ -4,7 +4,7 @@ import { PostMethod } from "./utils/RestMethods";
 import { Path, PathInput } from "./components/Path";
 import { Filter, FilterInput } from "./components/Filter";
 import { Keyword, KeywordInput } from "./components/Keyword";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import Eagle from "./assets/logo.png";
 import "./styles/App.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,15 +26,36 @@ export const App = (): JSX.Element => {
 
 	const submit = (): void => {
 		if (path?.path && path?.id == undefined) {
-			PostMethod("http://localhost:8080/api/v1/Path", JSON.stringify(path));
+			PostMethod(
+				"http://localhost:8080/api/v1/Path",
+				JSON.stringify(path),
+				(status: number, response: any) => {
+					if (status == 200)
+						setPath(response);
+				}
+			);
 		}
 
 		if (filter?.filter && filter?.id == undefined) {
-			PostMethod("http://localhost:8080/api/v1/Filter", JSON.stringify(filter));
+			PostMethod(
+				"http://localhost:8080/api/v1/Filter",
+				JSON.stringify(filter),
+				(status: number, response: any) => {
+					if (status == 200)
+						setPath(response);
+				}
+			);
 		}
 
 		if (keyword?.keyword && keyword?.id == undefined) {
-			PostMethod("http://localhost:8080/api/v1/Keyword", JSON.stringify(keyword));
+			PostMethod(
+				"http://localhost:8080/api/v1/Keyword",
+				JSON.stringify(keyword),
+				(status: number, response: any) => {
+					if (status == 200)
+						setPath(response);
+				}
+			);
 		}
 	};
 

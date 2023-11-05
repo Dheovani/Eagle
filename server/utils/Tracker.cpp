@@ -2,27 +2,36 @@
 
 using utils::Tracker;
 
-inline UINT hashString(const std::string& input) {
-	UINT hash = 0;
+inline std::string hashString(const std::string& input) {
+	unsigned int hash = 0;
 
 	for (char ch : input)
-		hash = (hash * 31) + static_cast<unsigned int>(ch);
+		hash += static_cast<unsigned int>(ch);
 
-	return hash;
+	return std::to_string(hash);
 }
 
-bool Tracker::hasValidExtension(const std::string& fileName) noexcept
+bool Tracker::hasValidExtension(const fs::path& file) noexcept
 {
-	fs::path filePath(fileName);
+	if (filters.empty())
+		return true;
 
-	if (fs::exists(filePath) && fs::is_regular_file(filePath)) {
-		std::string fileExtension = filePath.extension().string();
-
-		if (!fileExtension.empty() && fileExtension[0] == '.') {
-			fileExtension = fileExtension.substr(1);
-		}
+	if (fs::exists(file) && fs::is_regular_file(file)) {
+		std::string fileExtension = file.extension().string();
 
 		return std::find(filters.begin(), filters.end(), fileExtension) != filters.end();
+	}
+
+	return false;
+}
+
+bool Tracker::hasInvaliPath(const std::string& fileName)
+{
+	for (std::string& path : invalidPaths) {
+		path = path.substr(1); // Remove '!'
+
+		if (fileName.find(path) != std::string::npos)
+			return true;
 	}
 
 	return false;
@@ -33,14 +42,14 @@ void Tracker::traverseDirectory(const std::string& search, const fs::path& direc
 	for (const auto& entry : fs::directory_iterator(directory)) {
 		std::string fileName = entry.path().filename().string();
 
-		if (std::find(invalidPaths.begin(), invalidPaths.end(), fileName) != invalidPaths.end())
+		if (hasInvaliPath(fileName))
 			continue;
 
 		if (entry.is_directory()) {
 			traverseDirectory(search, entry.path(), files);
 		}
-		else if (entry.is_regular_file() && hasValidExtension(fileName)) {
-			scanFile(search, fileName, files);
+		else if (entry.is_regular_file() && hasValidExtension(entry.path())) {
+			scanFile(search, entry.path().string(), files);
 		}
 	}
 }
@@ -50,23 +59,21 @@ void Tracker::scanFile(const std::string& search, const std::string& fileName, J
 	std::ifstream file(fileName);
 
 	if (file.is_open()) {
+		UINT cont = 0;
 		std::string line;
-		UINT cont = 1;
+		std::string hash = hashString(fileName);
 
 		while (std::getline(file, line)) {
 			if (line.find(search) != std::string::npos) {
-				UINT hash = hashString(fileName);
-
-				if (files[hash].isNull()) {
-					Json::Value file;
-					file["path"] = fileName;
-
-					files[hash] = file;
+				if (!files.isMember(hash)) {
+					Json::Value fileJSON;
+					fileJSON["path"] = fileName;
+					files[hash] = fileJSON;
 				}
 
 				Json::Value lineJSON;
 				lineJSON["content"] = line;
-				lineJSON["num"] = cont;
+				lineJSON["num"] = ++cont;
 
 				files[hash]["lines"].append(lineJSON);
 			}

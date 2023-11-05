@@ -8,11 +8,16 @@ using drogon::HttpStatusCode;
 
 std::vector<std::string> extractValues(const Json::Value &value, const std::string &key)
 {
+	std::string keyValue = value[key].asString();
+	if (keyValue.find(';') == std::string::npos && !keyValue.empty())
+		return std::vector<std::string>{ keyValue };
+
 	std::vector<std::string> tokens;
-	std::istringstream iss(value["key"].asString());
+	std::istringstream iss(keyValue);
 
 	std::string token;
 	while (std::getline(iss, token, ';')) {
+		token.erase(std::remove_if(token.begin(), token.end(), ::isspace), token.end());
 		tokens.push_back(token);
 	}
 
@@ -33,9 +38,12 @@ void Search::search(const HttpRequestPtr& req, std::function<void(const HttpResp
 	tracker.setPaths(paths);
 	tracker.setFilters(filters);
 
-	Json::Value files;
+	Json::Value results, files = tracker.search(keywords);
 
-	auto resp = HttpResponse::newHttpJsonResponse(files);
+	for (const auto& key : files.getMemberNames())
+		results["results"].append(files[key]);
+
+	auto resp = HttpResponse::newHttpJsonResponse(results);
 	resp->setStatusCode(HttpStatusCode::k200OK);
 	resp->setContentTypeCode(ContentType::CT_APPLICATION_JSON);
 	callback(resp);

@@ -29,13 +29,7 @@ export const Panel = (props: Props): JSX.Element => {
 
 		PostMethod("http://localhost:8080/api/v1/Search/find", JSON.stringify(params), (status: number, response: any) => {
 			if (status === 200) {
-				const fieldList: File[] = [];
-
-				response.forEach((element: File) => {
-					fieldList.push(element);
-				});
-
-				setFiles(fieldList);
+				setFiles(response.results);
 			}
 
 			if (status >= 400) {
