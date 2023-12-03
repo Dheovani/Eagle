@@ -6,7 +6,7 @@ interface Props {
     info: string;
 };
 
-export const Tooltip = ({ info }: Props): JSX.Element => {
+const Tooltip = ({ info }: Props): JSX.Element => {
     const componentsProps = {
         tooltip: {
             sx: {
@@ -27,3 +27,5 @@ export const Tooltip = ({ info }: Props): JSX.Element => {
         </MuiTooltip>
     );
 };
+
+export default Tooltip;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PostMethod } from "@/utils/RestMethods";
 import { toast } from "react-toastify";
 import "./styles/panel.css";

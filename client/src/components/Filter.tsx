@@ -1,15 +1,23 @@
 import { useEffect, useState } from "react";
 import { GiBroom } from "react-icons/gi";
-import { GetMethod } from "../utils/RestMethods";
-import { Tooltip } from "../utils/Tooltip";
-import { FILTER, History } from "./History";
+import { GetMethod } from "@/utils/RestMethods";
+import Tooltip from "@/components/Tooltip";
+import History, { FILTER } from "@/components/History";
+import Checkbox from "@/components/Checkbox";
+import Input from "@/components/Input";
 
 export interface Filter {
 	filter: string;
 	id?: number;
 }
 
-export const FilterInput = (props: any): JSX.Element => {
+const FilterInput = (props: any): JSX.Element => {
+	const {
+		defaultValue,
+		setIgnoreCase,
+		updateDefaultValue
+	} = props;
+
 	const [selected, setSelected] = useState(false);
 	const [filter, setFilter] = useState<Filter[]>([]);
 
@@ -30,14 +38,13 @@ export const FilterInput = (props: any): JSX.Element => {
 			<History
 				items={filter}
 				endpoint={FILTER}
-				updateDefaultValue={props.updateDefaultValue}
+				updateDefaultValue={updateDefaultValue}
 			/>
 		);
 	};
 
-	const info =
-		"Este campo contém as extensões de arquivos aceitas na pesquisa. " +
-		'Para selecionar múltiplas extensões, utilize ";".';
+	const info = 'Este campo contém as extensões de arquivos aceitas na pesquisa. '
+		+ 'Para selecionar múltiplas extensões, utilize ";".';
 
 	return (
 		<>
@@ -45,48 +52,31 @@ export const FilterInput = (props: any): JSX.Element => {
 				Filtros / Extensões
 				{<Tooltip info={info} />}
 			</h2>
+
 			<div className="input-content">
-				<input
-					className="fields"
-					type="text"
-					name="filter"
+				<Input
 					id="filter"
-					value={props.defaultValue}
-					placeholder={selected ? "" : "Exemplo: .js; .jsx;"}
-					disabled={props.disable}
-					onFocus={() => setSelected(true)}
-					onBlur={() => setTimeout(() => setSelected(false), 100)}
+					placeholder="Exemplo: .js; .jsx;"
+					defaultValue={defaultValue}
+					selected={selected}
+					setSelected={setSelected}
 					onChange={(e) => {
-						const filter = {
-							filter: e.target.value,
-							date: new Date(),
-						};
-						props.updateDefaultValue(filter);
+						updateDefaultValue({
+							path: e.target.value
+						});
 					}}
 				/>
 				
-				<button
-					disabled={props.disable}
-					className="input-buttons"
-					onClick={() => props.updateDefaultValue({ filter: "" })}>
+				<button className="input-buttons" onClick={() => updateDefaultValue({ filter: "" })}>
 					<GiBroom />
 				</button>
 
-				<label htmlFor="ignoreCase">Considerar capitalização</label>
-				<input
-					className="checkbox"
-					type="checkbox"
-					checked={props.checked}
-					disabled={props.disable}
-					onChange={() => {
-						props.setIgnoreCase(!props.checked);
-					}}
-					name="ignoreCase"
-					id="ignoreCase"
-				/>
+				<Checkbox id="ignoreCase" label="Considerar capitalização" onClick={setIgnoreCase} />
 			</div>
 
 			{selected && renderHistory()}
 		</>
 	);
 };
+
+export default FilterInput;

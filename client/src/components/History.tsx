@@ -1,7 +1,7 @@
 import { BsFillTrashFill } from "react-icons/bs";
-import "./styles/history.css";
 import { DeleteMethod } from "@/utils/RestMethods";
 import { toast } from "react-toastify";
+import "./styles/history.css";
 
 export const PATH = "Path";
 export const FILTER = "Filter";
@@ -13,7 +13,7 @@ interface Props {
     updateDefaultValue: (value: any) => void,
 };
 
-export const History = (props: Props): JSX.Element => {
+const History = (props: Props): JSX.Element => {
     const {
         items,
         endpoint,
@@ -56,3 +56,5 @@ export const History = (props: Props): JSX.Element => {
         </div>
     );
 };
+
+export default History;

@@ -1,21 +1,13 @@
 import { useState } from "react";
-import { Panel, Line } from "./components/Panel";
+import { Panel } from "./components/Panel";
 import { PostMethod } from "./utils/RestMethods";
-import { Path, PathInput } from "./components/Path";
-import { Filter, FilterInput } from "./components/Filter";
-import { Keyword, KeywordInput } from "./components/Keyword";
+import PathInput, { Path } from "./components/Path";
+import FilterInput, { Filter } from "./components/Filter";
+import KeywordInput, { Keyword } from "./components/Keyword";
 import { ToastContainer } from "react-toastify";
-import Eagle from "./assets/logo.png";
 import "./styles/App.css";
 import "react-toastify/dist/ReactToastify.css";
-
-const Logo = (): JSX.Element => {
-	return (
-		<div className="logo">
-			<img src={Eagle} alt="logo" />
-		</div>
-	);
-};
+import Logo from "./components/Logo";
 
 export const App = (): JSX.Element => {
 	const [path, setPath] = useState<Path>({ path: "" });
@@ -87,23 +79,17 @@ export const App = (): JSX.Element => {
 				<FilterInput
 					defaultValue={filter?.filter}
 					updateDefaultValue={setFilter}
-					checked={ignoreCase}
 					setIgnoreCase={setIgnoreCase}
 				/>
 
 				<PathInput
 					defaultValue={path?.path}
 					updateDefaultValue={setPath}
-					checked={subFolders}
 					setSubFolders={setSubFolders}
 				/>
 			</div>
 
-			<Panel
-				submit={submit}
-				cleanAll={cleanAll}
-				params={params}
-			/>
+			<Panel submit={submit} cleanAll={cleanAll} params={params} />
 		</div>
 	);
 };

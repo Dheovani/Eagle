@@ -1,15 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { GiBroom } from "react-icons/gi";
-import { GetMethod } from "../utils/RestMethods";
-import { Tooltip } from "../utils/Tooltip";
-import { History, KEYWORD } from "./History";
+import { GetMethod } from "@/utils/RestMethods";
+import Tooltip from "@/components/Tooltip";
+import History, { KEYWORD } from "@/components/History";
+import Input from "@/components/Input";
 
 export interface Keyword {
 	keyword: string;
 	id?: number;
 }
 
-export const KeywordInput = (props: any): JSX.Element => {
+const KeywordInput = (props: any): JSX.Element => {
+	const {
+		defaultValue,
+		updateDefaultValue
+	} = props;
+
 	const [selected, setSelected] = useState(false);
 	const [keyword, setKeyword] = useState<Keyword[]>([]);
 
@@ -30,10 +36,14 @@ export const KeywordInput = (props: any): JSX.Element => {
 			<History
 				items={keyword}
 				endpoint={KEYWORD}
-				updateDefaultValue={props.updateDefaultValue}
+				updateDefaultValue={updateDefaultValue}
 			/>
 		);
 	};
+
+	const onSelect = useCallback(() => {
+		setTimeout(() => setSelected(!selected), 100)
+	}, []);
 
 	const info = "Este campo contém as palavras que devem ser buscadas.";
 
@@ -43,30 +53,22 @@ export const KeywordInput = (props: any): JSX.Element => {
 				Pesquisa
 				{<Tooltip info={info} />}
 			</h2>
+
 			<div className="input-content">
-				<input
-					className="fields"
-					type="text"
-					name="keyword"
+				<Input
 					id="keyword"
-					value={props.defaultValue}
-					placeholder={selected ? "" : "Digite aqui as palavras-chave"}
-					disabled={props.disable}
-					onFocus={() => setSelected(true)}
-					onBlur={() => setTimeout(() => setSelected(false), 100)}
+					placeholder="Digite aqui as palavras-chave"
+					defaultValue={defaultValue}
+					selected={selected}
+					setSelected={setSelected}
 					onChange={(e) => {
-						const keyword = {
-							keyword: e.target.value,
-							date: new Date(),
-						};
-						props.updateDefaultValue(keyword);
+						updateDefaultValue({
+							path: e.target.value
+						});
 					}}
 				/>
 
-				<button
-					disabled={props.disable}
-					className="input-buttons"
-					onClick={() => props.updateDefaultValue({ keyword: "" })}>
+				<button className="input-buttons" onClick={() => updateDefaultValue({ keyword: "" })}>
 					<GiBroom />
 				</button>
 			</div>
@@ -75,3 +77,5 @@ export const KeywordInput = (props: any): JSX.Element => {
 		</>
 	);
 };
+
+export default KeywordInput;
