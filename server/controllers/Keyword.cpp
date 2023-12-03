@@ -9,6 +9,7 @@ void Keyword::getAll(const HttpRequestPtr& req, std::function<void(const HttpRes
 {
 	const std::vector<Record> keywords = writer.readAll();
 	Json::Value ret;
+	ret["results"] = Json::arrayValue;
 
 	for (const Record& keyword : keywords) {
 		Json::Value value;
@@ -46,7 +47,7 @@ void Keyword::include(const HttpRequestPtr& req, std::function<void(const HttpRe
 void Keyword::deleteKeyword(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	Json::Value json = *req->getJsonObject();
-	const UINT id = json["id"].asUInt();
+	const size_t id = json["id"].asUInt();
 	writer.deleteRecord(id);
 
 	auto resp = HttpResponse::newHttpResponse();

@@ -58,32 +58,32 @@ void Tracker::scanFile(const std::string& search, const std::string& fileName, J
 {
 	std::ifstream file(fileName);
 
-	if (file.is_open()) {
-		UINT cont = 0;
-		std::string line;
-		std::string hash = hashString(fileName);
-
-		while (std::getline(file, line)) {
-			if (line.find(search) != std::string::npos) {
-				if (!files.isMember(hash)) {
-					Json::Value fileJSON;
-					fileJSON["path"] = fileName;
-					files[hash] = fileJSON;
-				}
-
-				Json::Value lineJSON;
-				lineJSON["content"] = line;
-				lineJSON["num"] = ++cont;
-
-				files[hash]["lines"].append(lineJSON);
-			}
-		}
-
-		file.close();
-	}
-	else {
+	if (!file.is_open()) {
 		std::cerr << "Couldn't open file " << fileName << std::endl;
+		return;
 	}
+
+	size_t cont = 0;
+	std::string line;
+	std::string hash = hashString(fileName);
+
+	while (std::getline(file, line)) {
+		if (line.find(search) != std::string::npos) {
+			if (!files.isMember(hash)) {
+				Json::Value fileJSON;
+				fileJSON["path"] = fileName;
+				files[hash] = fileJSON;
+			}
+
+			Json::Value lineJSON;
+			lineJSON["content"] = line;
+			lineJSON["num"] = ++cont;
+
+			files[hash]["lines"].append(lineJSON);
+		}
+	}
+
+	file.close();
 }
 
 Json::Value Tracker::search(const std::vector<std::string>& keywords)

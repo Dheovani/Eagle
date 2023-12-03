@@ -61,7 +61,7 @@ void BWriter::write(Record values[]) const
 	}
 }
 
-Record BWriter::read(UINT id) const
+Record BWriter::read(size_t id) const
 {
 	ifstream fin(file, ios::binary | ios::in);
 
@@ -103,12 +103,12 @@ std::vector<Record> BWriter::readAll() const
 	return result;
 }
 
-UINT BWriter::nextId() const
+size_t BWriter::nextId() const
 {
 	return readAll().size();
 }
 
-void BWriter::deleteRecord(UINT targetId) const
+void BWriter::deleteRecord(size_t targetId) const
 {
 	std::vector<Record> records = readAll();
 

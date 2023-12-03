@@ -56,6 +56,7 @@ void Path::getAll(const HttpRequestPtr& req, std::function<void(const HttpRespon
 {
 	const std::vector<Record> paths = writer.readAll();
 	Json::Value ret;
+    ret["results"] = Json::arrayValue;
 
 	for (const Record& path : paths) {
 		Json::Value value;
@@ -118,7 +119,7 @@ void Path::include(const HttpRequestPtr& req, std::function<void(const HttpRespo
 void Path::deletePath(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	Json::Value json = *req->getJsonObject();
-	const UINT id = json["id"].asUInt();
+	const size_t id = json["id"].asUInt();
 	writer.deleteRecord(id);
 
 	auto resp = HttpResponse::newHttpResponse();

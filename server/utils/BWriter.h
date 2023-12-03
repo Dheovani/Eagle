@@ -22,12 +22,12 @@ namespace utils
 
 		void write(Record values[]) const;
 
-		Record read(UINT id) const;
+		Record read(size_t id) const;
 
 		std::vector<Record> readAll() const;
 
-		UINT nextId() const;
+		size_t nextId() const;
 
-		void deleteRecord(UINT targetId) const;
+		void deleteRecord(size_t targetId) const;
 	};
 }

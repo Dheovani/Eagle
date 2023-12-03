@@ -9,6 +9,7 @@ void Filter::getAll(const HttpRequestPtr& req, std::function<void(const HttpResp
 {
 	const std::vector<Record> filters = writer.readAll();
 	Json::Value ret;
+	ret["results"] = Json::arrayValue;
 
 	for (const Record& filter : filters) {
 		Json::Value value;
@@ -46,7 +47,7 @@ void Filter::include(const HttpRequestPtr& req, std::function<void(const HttpRes
 void Filter::deleteFilter(const HttpRequestPtr& req, std::function<void(const HttpResponsePtr&)>&& callback)
 {
 	Json::Value json = *req->getJsonObject();
-	const UINT id = json["id"].asUInt();
+	const size_t id = json["id"].asUInt();
 	writer.deleteRecord(id);
 
 	auto resp = HttpResponse::newHttpResponse();
