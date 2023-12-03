@@ -63,7 +63,7 @@ const KeywordInput = (props: any): JSX.Element => {
 					setSelected={setSelected}
 					onChange={(e) => {
 						updateDefaultValue({
-							path: e.target.value
+							keyword: e.target.value
 						});
 					}}
 				/>

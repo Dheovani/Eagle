@@ -62,7 +62,7 @@ const FilterInput = (props: any): JSX.Element => {
 					setSelected={setSelected}
 					onChange={(e) => {
 						updateDefaultValue({
-							path: e.target.value
+							filter: e.target.value
 						});
 					}}
 				/>
